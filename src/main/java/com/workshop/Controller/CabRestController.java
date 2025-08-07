@@ -6,22 +6,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.workshop.Service.*;
-import com.workshop.WhatsAppPackage.BookingDetails;
-import com.workshop.WhatsAppPackage.WhatsAppResponse;
-import com.workshop.WhatsAppPackage.WhatsAppServiceException;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +48,23 @@ import com.workshop.Entity.Visitors;
 import com.workshop.Entity.onewayTrip;
 import com.workshop.Entity.roundTrip;
 import com.workshop.Repo.Trip;
-import  com.workshop.WhatsAppPackage.WhatsAppService;
+import com.workshop.Service.BookingService;
+import com.workshop.Service.CabInfoService;
+import com.workshop.Service.CitiesService;
+import com.workshop.Service.CityExtractionService;
+import com.workshop.Service.EmailService;
+import com.workshop.Service.OneFiftyService;
+import  com.workshop.Service.PopupService;
+import com.workshop.Service.StatesService;
+import com.workshop.Service.TripRateService;
+import com.workshop.Service.TripService;
+import com.workshop.Service.UserDetailServiceImpl;
+import com.workshop.Service.VendorDriverService;
+import com.workshop.Service.VisitorService;
+import com.workshop.WhatsAppPackage.BookingDetails;
+import com.workshop.WhatsAppPackage.WhatsAppResponse;
+import com.workshop.WhatsAppPackage.WhatsAppService;
+import com.workshop.WhatsAppPackage.WhatsAppServiceException;
 
 @RestController
 @RequestMapping("/api")
@@ -1597,7 +1605,8 @@ public ResponseEntity<Map<String, Object>> processForm(
             } else {
                 int totalAmount = Integer.parseInt(total);
                 int paidAmount = Integer.parseInt(amountPaid);
-                booking.setRemainingAmount(totalAmount - paidAmount);
+                int r = totalAmount - paidAmount;
+                booking.setRemainingAmount(r);
             }
            
             // Razorpay details for online payments
@@ -1775,7 +1784,8 @@ public ResponseEntity<Map<String, Object>> processForm(
                     "status", "success",
                     "bookingId", bookid,
                     "message", "Booking created successfully"));
-        } catch (Exception e) {
+        } catch (Exception e)
+         {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Booking creation failed: " + e.getMessage()));
@@ -1872,7 +1882,8 @@ public ResponseEntity<Map<String, Object>> processForm(
                 in.close();
             }
             connection.disconnect();
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -1971,6 +1982,7 @@ public ResponseEntity<Map<String, Object>> processForm(
                 longitude);
     }
 
+
     @PutMapping("/update-driver-location/{vendorDriverId}")
     public VendorDrivers updateDriverLocation(
             @PathVariable int vendorDriverId,
@@ -1984,6 +1996,7 @@ public ResponseEntity<Map<String, Object>> processForm(
         );
     }
 
+    
     @PutMapping("/enterOtpTimePre/{id}")
     public Booking updateEnterOtpTimePreTrip(@PathVariable int id){
         return this.ser.updateDriverEnterOtpTimePreStarted(id);
@@ -2058,7 +2071,8 @@ public ResponseEntity<Map<String, Object>> processForm(
             @RequestParam int suv,
             @RequestParam int suvplus,
             @RequestParam int ertiga
-    ) {
+    ) 
+    {
         try {
             PricingResponse response = oneFiftyService.updatePricingWithParams(
                     id, minDistance, maxDistance,
@@ -2082,7 +2096,8 @@ public ResponseEntity<Map<String, Object>> processForm(
             @RequestParam int suv,
             @RequestParam int suvplus,
             @RequestParam int ertiga
-    ) {
+    )
+     {
         try {
             PricingResponse response = oneFiftyService.createPricingWithParams(
                     minDistance, maxDistance,
@@ -2090,7 +2105,8 @@ public ResponseEntity<Map<String, Object>> processForm(
                     suv, suvplus, ertiga
             );
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        }
+         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
